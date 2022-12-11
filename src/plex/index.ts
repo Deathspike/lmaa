@@ -14,5 +14,4 @@ export * from './jobs/SeriesLoadJob';
 export * from './jobs/SeriesMetadataJob';
 export * from './jobs/SeriesRelatedJob';
 export * from './jobs/StatusJob';
-export * from './functions';
 export * from './types';

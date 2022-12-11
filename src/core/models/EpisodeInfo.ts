@@ -26,7 +26,7 @@ export class EpisodeInfo {
   get premiered() {
     const selector = this.$('episodedetails > premiered');
     const value = selector.first().text();
-    return value.length ? DateTime.fromSQL(value) : undefined;
+    return value.length ? DateTime.fromSQL(value).toSQLDate() : undefined;
   }
 
   get title() {

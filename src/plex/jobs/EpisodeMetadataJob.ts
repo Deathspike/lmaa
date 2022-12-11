@@ -15,7 +15,7 @@ export class EpisodeMetadataJob implements app.core.Job {
   async runAsync() {
     this.logger.info(`Checking ${this.traceId}`);
     const value = this.createPatch();
-    if (!this.shouldPatch(value)) {
+    if (!value.plot && !value.premiered && !value.title) {
       this.logger.info(`Skipping ${this.traceId}`);
     } else if (await this.api.episode.putAsync(this.sectionId, value)) {
       this.logger.info(`Finished ${this.traceId}`);
@@ -26,16 +26,15 @@ export class EpisodeMetadataJob implements app.core.Job {
 
   private createPatch() {
     const id = this.item.ratingKey;
-    const plot = this.nfo.plot;
-    const premiered = this.nfo.premiered?.toSQLDate();
-    const title = this.nfo.title;
+    const plot = ex(this.nfo.plot, this.item.summary);
+    const premiered = ex(this.nfo.premiered, this.item.originallyAvailableAt);
+    const title = ex(this.nfo.title, this.item.title);
     return {id, plot, premiered, title};
   }
+}
 
-  private shouldPatch(patch: ReturnType<typeof this.createPatch>) {
-    const plot = !app.eq(patch.plot, this.item.summary);
-    const premiered = !app.eq(patch.premiered, this.item.originallyAvailableAt);
-    const title = !app.eq(patch.title, this.item.title);
-    return plot || premiered || title;
-  }
+function ex(a?: string, b?: string) {
+  const ax = a || undefined;
+  const bx = b || undefined;
+  return ax && ax !== bx ? ax : undefined;
 }

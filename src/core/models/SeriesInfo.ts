@@ -20,7 +20,7 @@ export class SeriesInfo {
   get premiered() {
     const selector = this.$('tvshow > premiered');
     const value = selector.first().text();
-    return value.length ? DateTime.fromSQL(value) : undefined;
+    return value.length ? DateTime.fromSQL(value).toSQLDate() : undefined;
   }
 
   get title() {
