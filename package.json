@@ -1,0 +1,37 @@
+{
+  "name": "lmaa",
+  "author": "Deathspike",
+  "description": "Local Media Assets Agent",
+  "license": "MIT",
+  "repository": "git://github.com/Deathspike/lmaa",
+  "version": "0.1.0",
+  "main": "dist",
+  "types": "dist",
+  "engines": {
+    "npm": ">= 8.0.0",
+    "node": ">= 18.0.0"
+  },
+  "dependencies": {
+    "ajv": "8.11.2",
+    "cheerio": "1.0.0-rc.10",
+    "luxon": "3.1.1",
+    "ws": "8.11.0"
+  },
+  "devDependencies": {
+    "@types/luxon": "3.1.0",
+    "@types/ws": "8.5.3",
+    "json-schema-to-ts": "2.6.2",
+    "pre-commit": "1.2.2",
+    "prettier": "2.8.0",
+    "rimraf": "3.0.2",
+    "typescript": "4.9.3"
+  },
+  "scripts": {
+    "prepare": "npm run repository:prune && npm run repository:build",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "repository:build": "tsc",
+    "repository:prune": "rimraf build && rimraf dist",
+    "test": "npm run prettier:check"
+  }
+}
