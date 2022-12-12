@@ -12,7 +12,7 @@ export class SectionJob implements app.core.Job {
 
   async runAsync(add: app.core.JobAdd) {
     this.logger.info(`Checking ${this.traceId}`);
-    const entries = await this.api.series.listAsync(this.id);
+    const entries = await this.api.section.listAsync(this.id);
     if (entries) {
       add(this.process(entries));
       this.logger.info(`Finished ${this.traceId}`);
@@ -21,10 +21,14 @@ export class SectionJob implements app.core.Job {
     }
   }
 
-  private *process(entries: Array<app.series.IEntry>) {
+  private *process(entries: Array<app.section.IEntry>) {
     for (const entry of entries.reverse()) {
-      const traceId = `${entry.title} (${entry.ratingKey})`;
-      yield new app.SeriesJob(this.ctx, entry.ratingKey, traceId);
+      if (entry.guid.startsWith('com.plexapp.agents.none:')) {
+        if (entry.type === 'show') {
+          const traceId = `${entry.title} (${entry.ratingKey})`;
+          yield new app.SeriesJob(this.ctx, entry.ratingKey, traceId);
+        }
+      }
     }
   }
 }
