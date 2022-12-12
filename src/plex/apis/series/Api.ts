@@ -1,6 +1,6 @@
 import * as app from '.';
 
-export class Api extends app.core.BaseApi {
+export class Api extends app.core.Api {
   async getAsync(seriesId: string) {
     try {
       const headers = {accept: 'application/json'};

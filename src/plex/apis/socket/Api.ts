@@ -1,7 +1,7 @@
 import * as app from '.';
 import * as ws from 'ws';
 
-export class Api extends app.core.BaseApi {
+export class Api extends app.core.Api {
   async connectAsync() {
     return new Promise<ws.WebSocket | undefined>(resolve => {
       const url = this.createWebsocketUrl();

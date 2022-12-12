@@ -1,4 +1,4 @@
-export abstract class BaseApi {
+export abstract class Api {
   constructor(
     private readonly baseUrl: string,
     private readonly token: string
