@@ -9,28 +9,39 @@ export class Worker extends app.Emitter {
     super();
   }
 
-  add(job: app.Job) {
-    this.queue.push(job);
-    if (this.activeWorkers >= this.maximumWorkers) return;
-    this.runAsync().then(this.tryDrainEvent.bind(this));
+  add(value: Iterable<app.Job> | app.Job) {
+    if (isIterable(value)) {
+      this.queue.push(...value);
+      this.tryRun();
+    } else {
+      this.queue.push(value);
+      this.tryRun();
+    }
   }
 
   private async runAsync() {
     const add = this.add.bind(this);
     while (this.queue.length) {
       try {
-        this.activeWorkers++;
         await this.queue.pop()?.runAsync(add);
       } catch (err) {
         this.logger.error(err);
-      } finally {
-        this.activeWorkers--;
       }
     }
   }
 
-  private tryDrainEvent() {
-    if (this.activeWorkers) return;
-    this.dispatchEvent();
+  private tryRun() {
+    while (this.activeWorkers < this.maximumWorkers) {
+      this.activeWorkers++;
+      this.runAsync().then(() => {
+        this.activeWorkers--;
+        if (this.activeWorkers) return;
+        this.dispatchEvent();
+      });
+    }
   }
+}
+
+function isIterable<T>(value: Iterable<T> | T): value is Iterable<T> {
+  return Symbol.iterator in (value as Iterable<T>);
 }

@@ -14,17 +14,17 @@ export class SectionJob implements app.core.Job {
     this.logger.info(`Checking ${this.traceId}`);
     const entries = await this.api.series.listAsync(this.id);
     if (entries) {
-      this.process(add, entries);
+      add(this.process(entries));
       this.logger.info(`Finished ${this.traceId}`);
     } else {
       this.logger.warn(`Rejected ${this.traceId}`);
     }
   }
 
-  private process(add: app.core.JobAdd, entries: Array<app.series.IEntry>) {
+  private *process(entries: Array<app.series.IEntry>) {
     for (const entry of entries.reverse()) {
       const traceId = `${entry.title} (${entry.ratingKey})`;
-      add(new app.SeriesJob(this.ctx, entry.ratingKey, traceId));
+      yield new app.SeriesJob(this.ctx, entry.ratingKey, traceId);
     }
   }
 }
